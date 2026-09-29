@@ -1,0 +1,344 @@
+{% extends 'web/base.html' %}
+{% load static %}
+
+{% block title %}{{ site_config.site_name }} - Página Oficial{% endblock %}
+
+{% block content %}
+
+  <!-- =========================================================================
+       1. HERO CARRUSEL (Administrable con imágenes, clics y auto-play)
+       ========================================================================= -->
+  <section class="carousel-section" aria-label="Galería de Destacados">
+    <div class="carousel-container">
+      
+      <!-- Pista de Diapositivas -->
+      <div class="carousel-track" id="carouselTrack">
+        {% for slide in slides %}
+        <div class="carousel-slide" data-index="{{ forloop.counter0 }}">
+          {% if slide.image %}
+            <img src="{{ slide.image.url }}" alt="{{ slide.title }}">
+          {% else %}
+            <img src="{% static 'images/slide_fallback.svg' %}" alt="{{ slide.title }}">
+          {% endif %}
+          
+          <div class="carousel-caption-overlay">
+            <div class="carousel-caption">
+              <h2>{{ slide.title }}</h2>
+              {% if slide.subtitle %}
+                <p>{{ slide.subtitle }}</p>
+              {% endif %}
+              
+              <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                {% if slide.button_text and slide.button_link %}
+                  <a href="{{ slide.button_link }}" class="btn btn-primary" style="padding: 12px 28px; font-size: 1.05rem;">
+                    {{ slide.button_text }}
+                  </a>
+                {% endif %}
+
+                {% if is_admin %}
+                  <a href="{% url 'slide_edit' slide.id %}" class="admin-bar-quick" title="Editar este slide en el panel">
+                    ✏️ Editar este Slide (#{{ slide.order }})
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <!-- Diapositiva por defecto si no hay ninguna creada aún -->
+        <div class="carousel-slide">
+          <div class="carousel-caption-overlay" style="background: linear-gradient(135deg, #ffd1dc, #f8a5c2);">
+            <div class="carousel-caption">
+              <h2>🌸 Bienvenidos al Universo VillAxolote</h2>
+              <p>Música, tienda oficial y noticias del mundo anfibio más tierno.</p>
+              {% if is_admin %}
+                <a href="{% url 'slide_create' %}" class="btn btn-admin">
+                  ➕ Agregar Primer Slide
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Flechas Interactivas para Mover con Clics -->
+      <button class="carousel-btn carousel-btn-prev" id="carouselPrev" aria-label="Diapositiva anterior">
+        ❮
+      </button>
+      <button class="carousel-btn carousel-btn-next" id="carouselNext" aria-label="Diapositiva siguiente">
+        ❯
+      </button>
+
+      <!-- Indicadores de Puntos (Dots) -->
+      <div class="carousel-dots" id="carouselDots"></div>
+    </div>
+
+    <!-- Acceso rápido para administradores -->
+    {% if is_admin %}
+    <div style="text-align: right; margin-top: 10px;">
+      <a href="/panel/?tab=carrusel" class="admin-bar-quick">
+        ⚙️ Administrar Carrusel en Panel Personalizado
+      </a>
+    </div>
+    {% endif %}
+  </section>
+
+
+  <!-- =========================================================================
+       2. SECCIÓN: BIOGRAFÍA (#biografia)
+       ========================================================================= -->
+  <section id="biografia" class="section">
+    <div class="section-header">
+      <span class="section-tag">Nuestra Historia</span>
+      <h2 class="section-title">{{ bio.title }}</h2>
+      <p class="section-subtitle">{{ bio.subtitle }}</p>
+      {% if is_admin %}
+        <div style="margin-top: 12px;">
+          <a href="{% url 'bio_edit' %}" class="admin-bar-quick">
+            ✏️ Editar Textos y Datos de Biografía
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="bio-wrapper">
+      <!-- Columna Imagen -->
+      <div class="bio-image-col">
+        <div class="bio-image-frame">
+          {% if bio.image %}
+            <img src="{{ bio.image.url }}" alt="{{ bio.title }}">
+          {% else %}
+            <div style="height: 380px; display: flex; align-items: center; justify-content: center; background: #ffe5ec; font-size: 5rem;">
+              🦎
+            </div>
+          {% endif %}
+        </div>
+        {% if bio.quote %}
+        <div class="bio-quote-bubble">
+          {{ bio.quote }}
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Columna Texto y Estadísticas -->
+      <div class="bio-content">
+        <div class="bio-text">
+          <p>{{ bio.body_1|linebreaksbr }}</p>
+          {% if bio.body_2 %}
+            <p>{{ bio.body_2|linebreaksbr }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Cifras destacadas dinámicas -->
+        <div class="bio-stats">
+          <div class="stat-item">
+            <div class="stat-number">{{ bio.stat_1_number }}</div>
+            <div class="stat-label">{{ bio.stat_1_label }}</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">{{ bio.stat_2_number }}</div>
+            <div class="stat-label">{{ bio.stat_2_label }}</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">{{ bio.stat_3_number }}</div>
+            <div class="stat-label">{{ bio.stat_3_label }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =========================================================================
+       3. SECCIÓN: TIENDA OFICIAL (#tienda)
+       ========================================================================= -->
+  <section id="tienda" class="section">
+    <div class="section-header">
+      <span class="section-tag">Merch & Colección</span>
+      <h2 class="section-title">Tienda Oficial VillAxolote</h2>
+      <p class="section-subtitle">Productos diseñados con la estética rosa pastel más tierna y materiales premium.</p>
+      {% if is_admin %}
+        <div style="margin-top: 12px;">
+          <a href="/panel/?tab=tienda" class="admin-bar-quick">
+            ✏️ Administrar Tienda en Panel Personalizado
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Filtros de Categoría -->
+    <div class="shop-filters">
+      <button class="filter-btn active" data-filter="all">🌸 Todos los Artículos</button>
+      <button class="filter-btn" data-filter="ropa">👚 Ropa & Moda</button>
+      <button class="filter-btn" data-filter="musica">🎵 Vinilos & Álbumes</button>
+      <button class="filter-btn" data-filter="coleccionables">✨ Peluches & Coleccionables</button>
+      <button class="filter-btn" data-filter="accesorios">🎀 Accesorios & Stickers</button>
+    </div>
+
+    <!-- Cuadrícula de Productos -->
+    <div class="products-grid">
+      {% for product in products %}
+      <div class="product-card" data-category="{{ product.category }}">
+        <div class="product-image-wrap">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+          {% else %}
+            <div style="height: 100%; display: flex; align-items: center; justify-content: center; background: #ffd1dc; font-size: 3rem;">
+              🎁
+            </div>
+          {% endif %}
+          
+          {% if product.badge %}
+            <span class="product-badge">{{ product.badge }}</span>
+          {% endif %}
+        </div>
+
+        <div class="product-info">
+          <span class="product-cat">{{ product.get_category_display }}</span>
+          <h3 class="product-title">{{ product.name }}</h3>
+          <p class="product-desc">{{ product.description }}</p>
+          
+          <div class="product-footer">
+            <span class="product-price">${{ product.price }}</span>
+            <button type="button" class="btn btn-primary" style="padding: 8px 18px; font-size: 0.88rem;" onclick="alert('🌸 ¡Gracias por tu interés en {{ product.name }}! La pasarela de pago o reserva se abrirá pronto.')">
+              Comprar 🛍️
+            </button>
+          </div>
+        </div>
+
+        {% if is_admin %}
+          <div style="padding: 6px 14px; background: rgba(94, 36, 57, 0.05); text-align: center; border-top: 1px solid var(--border-pink);">
+            <a href="{% url 'product_edit' product.id %}" style="font-size: 0.8rem; color: var(--pink-800); font-weight: 700;">
+              ✏️ Editar Producto en Panel
+            </a>
+          </div>
+        {% endif %}
+      </div>
+      {% empty %}
+      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: var(--surface-card); border-radius: var(--radius-lg); border: 1px dashed var(--pink-400);">
+        <p style="font-size: 1.1rem; color: var(--text-secondary);">Pronto agregaremos nuevos productos mágicos a la tienda.</p>
+        {% if is_admin %}
+          <a href="{% url 'product_create' %}" class="btn btn-admin" style="margin-top: 14px;">
+            ➕ Agregar Nuevo Producto
+          </a>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+
+  <!-- =========================================================================
+       4. SECCIÓN: CONCIERTOS Y NOTICIAS (#conciertos-noticias)
+       ========================================================================= -->
+  <section id="conciertos-noticias" class="section">
+    <div class="section-header">
+      <span class="section-tag">En Vivo & Novedades</span>
+      <h2 class="section-title">Conciertos y Noticias</h2>
+      <p class="section-subtitle">Fechas de nuestra gira rosa y las últimas novedades de nuestro ecosistema.</p>
+      {% if is_admin %}
+        <div style="margin-top: 12px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+          <a href="/panel/?tab=conciertos" class="admin-bar-quick">
+            ✏️ Administrar Conciertos en Panel
+          </a>
+          <a href="/panel/?tab=noticias" class="admin-bar-quick">
+            ✏️ Administrar Noticias en Panel
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="concerts-news-grid">
+      
+      <!-- Columna 1: Conciertos -->
+      <div id="conciertos">
+        <h3 class="subcol-title">
+          <span>Próximos Conciertos 🎟️</span>
+          {% if is_admin %}
+            <a href="{% url 'concert_create' %}" style="font-size: 0.8rem; color: var(--pink-700);">+ Agregar Show</a>
+          {% endif %}
+        </h3>
+
+        <div class="concert-list">
+          {% for concert in concerts %}
+          <div class="concert-card">
+            <div class="concert-date-badge">
+              <div class="concert-day">{{ concert.date|date:"d" }}</div>
+              <div class="concert-month">{{ concert.date|date:"M" }}</div>
+            </div>
+
+            <div class="concert-details">
+              <div class="concert-city">{{ concert.city }}</div>
+              <div class="concert-venue">{{ concert.venue }} &bull; {{ concert.date|date:"H:i" }} hrs</div>
+              <div class="concert-status status-{{ concert.status }}">
+                {{ concert.get_status_display }}
+              </div>
+            </div>
+
+            <div>
+              {% if concert.status == 'agotado' %}
+                <span class="btn btn-secondary" style="opacity: 0.6; cursor: not-allowed; padding: 8px 16px; font-size: 0.85rem;">
+                  Agotado
+                </span>
+              {% else %}
+                <a href="{{ concert.ticket_link }}" class="btn btn-primary" style="padding: 8px 18px; font-size: 0.88rem;" onclick="if(this.getAttribute('href')==='#'){ alert('🎟️ Las entradas para {{ concert.city }} estarán disponibles a través de Ticketmaster.'); return false; }">
+                  Tickets
+                </a>
+              {% endif %}
+            </div>
+          </div>
+          {% empty %}
+          <p style="color: var(--text-secondary); text-align: center; padding: 30px; background: var(--surface-card); border-radius: var(--radius-md);">
+            No hay fechas anunciadas en este momento. ¡Atentos a nuestras redes!
+          </p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Columna 2: Noticias -->
+      <div id="noticias">
+        <h3 class="subcol-title">
+          <span>Últimas Noticias 📰</span>
+          {% if is_admin %}
+            <a href="{% url 'news_create' %}" style="font-size: 0.8rem; color: var(--pink-700);">+ Publicar Noticia</a>
+          {% endif %}
+        </h3>
+
+        <div class="news-list">
+          {% for news in news_items %}
+          <article class="news-card">
+            {% if news.image %}
+              <img src="{{ news.image.url }}" alt="{{ news.title }}" class="news-img">
+            {% else %}
+              <div class="news-img" style="display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+                🌸
+              </div>
+            {% endif %}
+
+            <div class="news-body" style="flex-grow: 1;">
+              <div class="news-meta">
+                <span class="news-tag">{{ news.tag }}</span>
+                <span class="news-date">{{ news.published_date|date:"d M, Y" }}</span>
+                {% if is_admin %}
+                  <a href="{% url 'news_edit' news.id %}" style="margin-left: auto; font-size: 0.78rem; color: var(--pink-700); font-weight: bold;">
+                    ✏️ Editar
+                  </a>
+                {% endif %}
+              </div>
+              <h4 class="news-title">{{ news.title }}</h4>
+              <p class="news-excerpt">{{ news.summary }}</p>
+            </div>
+          </article>
+          {% empty %}
+          <p style="color: var(--text-secondary); text-align: center; padding: 30px; background: var(--surface-card); border-radius: var(--radius-md);">
+            Pronto publicaremos nuevas novedades y lanzamientos.
+          </p>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+{% endblock %}

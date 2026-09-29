@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 300" width="500" height="300">
+                <defs>
+                    <linearGradient id="nbg" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#ffd1dc" />
+                        <stop offset="100%" stop-color="#f8a5c2" />
+                    </linearGradient>
+                </defs>
+                <rect width="500" height="300" rx="16" fill="url(#nbg)"/>
+                <circle cx="250" cy="130" r="60" fill="#ffffff" fill-opacity="0.3"/>
+                <text x="250" y="150" font-size="50" text-anchor="middle">⭐</text>
+                <text x="250" y="240" font-family="'Segoe UI', sans-serif" font-weight="bold" font-size="20" fill="#5e2439" text-anchor="middle">Confirmada nuestra par</text>
+            </svg>

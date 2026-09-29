@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" width="1200" height="600">
+  <defs>
+    <linearGradient id="bg1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffd1dc" />
+      <stop offset="50%" stop-color="#f8a5c2" />
+      <stop offset="100%" stop-color="#f391a0" />
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="600" fill="url(#bg1)"/>
+  <circle cx="950" cy="300" r="240" fill="url(#glow)"/>
+  <circle cx="200" cy="150" r="80" fill="#ffffff" fill-opacity="0.2"/>
+  <circle cx="350" cy="480" r="120" fill="#ffffff" fill-opacity="0.15"/>
+  <circle cx="80" cy="500" r="40" fill="#ffffff" fill-opacity="0.25"/>
+
+  <!-- Axolotl Character Art -->
+  <g transform="translate(800, 180) scale(1.1)">
+    <!-- Branchial frills (branquias) -->
+    <path d="M40 70 C-10 40 -10 10 30 30 C10 0 40 -10 60 20 C60 -20 90 -10 90 30" fill="#e66767" opacity="0.85"/>
+    <path d="M200 70 C250 40 250 10 210 30 C230 0 200 -10 180 20 C180 -20 150 -10 150 30" fill="#e66767" opacity="0.85"/>
+    <!-- Head -->
+    <ellipse cx="120" cy="90" rx="85" ry="65" fill="#fde2e4" stroke="#f4a2b2" stroke-width="4"/>
+    <!-- Blush -->
+    <circle cx="65" cy="105" r="16" fill="#f8a5c2" opacity="0.8"/>
+    <circle cx="175" cy="105" r="16" fill="#f8a5c2" opacity="0.8"/>
+    <!-- Eyes -->
+    <circle cx="80" cy="85" r="9" fill="#5e2439"/>
+    <circle cx="160" cy="85" r="9" fill="#5e2439"/>
+    <circle cx="78" cy="82" r="3" fill="#ffffff"/>
+    <circle cx="158" cy="82" r="3" fill="#ffffff"/>
+    <!-- Smile -->
+    <path d="M105 105 Q120 120 135 105" fill="none" stroke="#5e2439" stroke-width="4" stroke-linecap="round"/>
+    <!-- Little paws -->
+    <ellipse cx="90" cy="170" rx="16" ry="12" fill="#fde2e4"/>
+    <ellipse cx="150" cy="170" rx="16" ry="12" fill="#fde2e4"/>
+  </g>
+
+  <!-- Typography Overlay -->
+  <text x="100" y="260" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="64" fill="#5e2439">
+    VILLAXOLOTE
+  </text>
+  <text x="102" y="325" font-family="'Segoe UI', Roboto, sans-serif" font-weight="600" font-size="28" fill="#88304e">
+    Gira Mística 2026 • Pop Acuático &amp; Melodías Rosadas
+  </text>
+  <text x="102" y="375" font-family="'Segoe UI', Roboto, sans-serif" font-size="20" fill="#6d3049">
+    Siente la magia de nuestro hábitat sonoro. ¡Nuevas fechas anunciadas!
+  </text>
+  <!-- Sparkles -->
+  <text x="520" y="210" font-size="34">✨</text>
+  <text x="650" y="380" font-size="28">🌸</text>
+  <text x="80" y="190" font-size="30">🎵</text>
+</svg>

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" width="1200" height="600">
+  <defs>
+    <linearGradient id="bg3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff9a9e" />
+      <stop offset="99%" stop-color="#fecfef" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="600" fill="url(#bg3)"/>
+  
+  <circle cx="900" cy="300" r="180" fill="#ffffff" fill-opacity="0.3"/>
+  <text x="820" y="340" font-size="120">🎤</text>
+
+  <text x="100" y="240" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="60" fill="#4a1525">
+    EN VIVO &amp; CONCIERTOS
+  </text>
+  <text x="102" y="310" font-family="'Segoe UI', Roboto, sans-serif" font-weight="600" font-size="28" fill="#6d1b33">
+    Próxima parada: Festival Rosa en Santiago, CDMX y Buenos Aires
+  </text>
+  <text x="102" y="360" font-family="'Segoe UI', Roboto, sans-serif" font-size="20" fill="#7a253f">
+    Asegura tus entradas antes de que se agoten. ¡Experiencia VIP disponible!
+  </text>
+  <text x="540" y="220" font-size="40">✨</text>
+  <text x="100" y="440" font-size="32">🎟️ ⚡ 🎶</text>
+</svg>

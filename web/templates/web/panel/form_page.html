@@ -1,0 +1,77 @@
+{% extends 'web/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} | Panel VillAxolote{% endblock %}
+
+{% block content %}
+<div class="section" style="padding-top: 30px; max-width: 860px;">
+  
+  <div style="background: var(--surface-card); border: 1.5px solid var(--border-pink); border-radius: var(--radius-lg); padding: 40px; box-shadow: var(--shadow-soft);">
+    
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; border-bottom: 1.5px solid var(--border-pink); padding-bottom: 20px;">
+      <div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.6rem;">✏️</span>
+          <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--pink-900);">{{ title }}</h1>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-top: 4px;">{{ subtitle }}</p>
+      </div>
+
+      <a href="/panel/?tab={{ back_tab }}" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.9rem;">
+        ← Volver al Panel
+      </a>
+    </div>
+
+    <!-- Si hay imagen actual, mostrar vista previa -->
+    {% if current_image %}
+    <div style="margin-bottom: 24px; padding: 14px; background: #ffffff; border-radius: var(--radius-md); border: 1px dashed var(--pink-400); display: flex; align-items: center; gap: 18px;">
+      <div style="width: 110px; height: 80px; border-radius: 8px; overflow: hidden; background: var(--pink-100); flex-shrink: 0;">
+        <img src="{{ current_image }}" alt="Vista previa actual" style="width: 100%; height: 100%; object-fit: cover;">
+      </div>
+      <div>
+        <strong style="color: var(--pink-900); font-size: 0.92rem; display: block;">Imagen / Foto cargada actualmente</strong>
+        <p style="font-size: 0.85rem; color: var(--text-secondary);">Si no seleccionas un archivo nuevo, se mantendrá esta imagen intacta.</p>
+      </div>
+    </div>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data" class="auth-form" style="gap: 20px;">
+      {% csrf_token %}
+
+      {% for field in form %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}" class="form-label" style="display: flex; justify-content: space-between;">
+          <span>{{ field.label }}</span>
+          {% if field.field.required %}<span style="color: #e76f8a; font-size: 0.8rem;">* Obligatorio</span>{% endif %}
+        </label>
+        
+        {{ field }}
+
+        {% if field.help_text %}
+          <small style="color: var(--text-muted); font-size: 0.82rem; margin-top: 2px;">{{ field.help_text }}</small>
+        {% endif %}
+
+        {% if field.errors %}
+          <div style="color: #dc3545; font-size: 0.85rem; margin-top: 4px;">
+            {% for error in field.errors %}
+              <div>⚠ {{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+
+      <div style="display: flex; gap: 14px; justify-content: flex-end; margin-top: 16px; border-top: 1.5px solid var(--border-pink); padding-top: 24px;">
+        <a href="/panel/?tab={{ back_tab }}" class="btn btn-secondary">
+          Cancelar
+        </a>
+        <button type="submit" class="btn btn-primary" style="padding: 12px 32px; font-size: 1.05rem;">
+          Guardar Cambios 🌸
+        </button>
+      </div>
+    </form>
+
+  </div>
+
+</div>
+{% endblock %}

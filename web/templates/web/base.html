@@ -1,0 +1,199 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ site_config.site_name }}{% endblock %} | {{ site_config.slogan }}</title>
+  
+  <!-- Favicon con Axolote -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
+  
+  <!-- Google Fonts: Outfit (moderna, redonda y amigable) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- CSS Oficial VillAxolote -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <!-- Barra de Notificación / Anuncios Superior -->
+  {% if site_config.announcement_bar %}
+  <div class="announcement-bar">
+    {{ site_config.announcement_bar }}
+  </div>
+  {% endif %}
+
+  <!-- Header & Navbar Principal (4 Secciones Clave) -->
+  <header class="site-header">
+    <div class="navbar-container">
+      
+      <!-- Brand Logo -->
+      <a href="{% url 'home' %}" class="brand">
+        <span class="logo-icon">🦎</span>
+        <span class="brand-text">{{ site_config.site_name }}</span>
+      </a>
+
+      <!-- Botón Móvil -->
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menú" aria-expanded="false">
+        ☰
+      </button>
+
+      <!-- Las 4 Secciones del Navbar -->
+      <ul class="nav-links" id="navLinks">
+        <!-- 1. Biografía -->
+        <li>
+          <a href="{% url 'home' %}#biografia" class="nav-link">
+            <span>📖</span> Biografía
+          </a>
+        </li>
+
+        <!-- 2. Tienda -->
+        <li>
+          <a href="{% url 'home' %}#tienda" class="nav-link">
+            <span>🛍️</span> Tienda
+          </a>
+        </li>
+
+        <!-- 3. Conciertos y Noticias -->
+        <li>
+          <a href="{% url 'home' %}#conciertos-noticias" class="nav-link">
+            <span>🎟️</span> Conciertos y Noticias
+          </a>
+        </li>
+
+        <!-- 4. Login o Register / Panel de Administrador -->
+        <li class="nav-auth-item">
+          {% if user.is_authenticated %}
+            <div class="nav-auth">
+              <!-- Desbloqueo especial si es Administrador -->
+              {% if user.is_staff or user.is_superuser %}
+                <a href="{% url 'admin_dashboard' %}" class="btn btn-admin" title="Abrir Panel de Control Personalizado">
+                  <span>⚙️</span> Panel Personalizado
+                </a>
+              {% endif %}
+
+              <div class="user-pill">
+                <span class="user-avatar">{{ user.username|first|upper }}</span>
+                <span style="font-weight: 700; font-size: 0.9rem;">{{ user.username }}</span>
+                {% if user.is_staff or user.is_superuser %}
+                  <span class="badge-admin">Admin</span>
+                {% else %}
+                  <span class="badge-reader">Lector</span>
+                {% endif %}
+              </div>
+
+              <a href="{% url 'logout' %}" class="btn btn-secondary" style="padding: 8px 14px; font-size: 0.88rem;" title="Cerrar Sesión">
+                Salir 🚪
+              </a>
+            </div>
+          {% else %}
+            <!-- Si no ha iniciado sesión, ofrece Login o Registro -->
+            <div class="nav-auth">
+              <a href="{% url 'login' %}" class="btn btn-outline" style="padding: 8px 18px;">
+                Iniciar Sesión
+              </a>
+              <a href="{% url 'register' %}" class="btn btn-primary" style="padding: 8px 18px;">
+                Registrarse
+              </a>
+            </div>
+          {% endif %}
+        </li>
+      </ul>
+
+    </div>
+  </header>
+
+  <!-- Mensajes Flash de Django -->
+  {% if messages %}
+  <div class="messages-container">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+        <span>{{ message }}</span>
+        <button type="button" class="alert-close" aria-label="Cerrar">&times;</button>
+      </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Contenido Principal -->
+  <main>
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <!-- Footer con temática rosa y enlaces de redes -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <div class="brand">
+          <span class="logo-icon">🌸</span>
+          <span class="brand-text">{{ site_config.site_name }}</span>
+        </div>
+        <p class="footer-tagline">{{ site_config.slogan }}</p>
+        <div class="social-links">
+          {% if site_config.spotify_url %}
+            <a href="{{ site_config.spotify_url }}" target="_blank" class="social-btn" title="Spotify">🎵</a>
+          {% endif %}
+          {% if site_config.instagram_url %}
+            <a href="{{ site_config.instagram_url }}" target="_blank" class="social-btn" title="Instagram">📸</a>
+          {% endif %}
+          {% if site_config.youtube_url %}
+            <a href="{{ site_config.youtube_url }}" target="_blank" class="social-btn" title="YouTube">📺</a>
+          {% endif %}
+          {% if site_config.tiktok_url %}
+            <a href="{{ site_config.tiktok_url }}" target="_blank" class="social-btn" title="TikTok">✨</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Explorar</h4>
+        <ul>
+          <li><a href="{% url 'home' %}#biografia">Nuestra Biografía</a></li>
+          <li><a href="{% url 'home' %}#tienda">Tienda Oficial</a></li>
+          <li><a href="{% url 'home' %}#conciertos">Fechas de Conciertos</a></li>
+          <li><a href="{% url 'home' %}#noticias">Últimas Noticias</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Comunidad</h4>
+        <ul>
+          {% if user.is_authenticated %}
+            <li><span>Conectado como: <strong>{{ user.username }}</strong></span></li>
+            {% if user.is_staff or user.is_superuser %}
+              <li><a href="{% url 'admin_dashboard' %}" style="color: var(--pink-700); font-weight: bold;">⚙️ Panel Personalizado</a></li>
+            {% endif %}
+            <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
+          {% else %}
+            <li><a href="{% url 'login' %}">Iniciar Sesión</a></li>
+            <li><a href="{% url 'register' %}">Crear Cuenta Nueva</a></li>
+          {% endif %}
+          <li><a href="mailto:{{ site_config.contact_email }}">Contacto Prensa & Booking</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Santuario Axolote</h4>
+        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 12px;">
+          Apoyamos activamente la conservación del ajolote rosa y sus aguas milenarias.
+        </p>
+        <span style="font-size: 1.8rem;">🦎 🌸 💖</span>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>{{ site_config.footer_text }}</p>
+      <p>Hecho con amor en color rosa pastel 🌸</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="{% static 'js/main.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

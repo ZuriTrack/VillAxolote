@@ -1,0 +1,34 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 600' width='600' height='600'>
+  <defs>
+    <radialGradient id='bioGrad' cx='50%' cy='50%' r='50%'>
+      <stop offset='0%' stop-color='#ffe5ec'/>
+      <stop offset='70%' stop-color='#f8a5c2'/>
+      <stop offset='100%' stop-color='#f391a0'/>
+    </radialGradient>
+  </defs>
+  <rect width='600' height='600' rx='32' fill='url(#bioGrad)'/>
+  <circle cx='300' cy='280' r='200' fill='#ffffff' fill-opacity='0.4'/>
+  
+  <!-- Big Cute Axolotl in Bio -->
+  <g transform='translate(150, 140) scale(1.3)'>
+    <path d='M30 60 C-20 30 -20 0 20 20 C0 -10 30 -20 50 10 C50 -30 80 -20 80 20' fill='#e66767' opacity='0.9'/>
+    <path d='M190 60 C240 30 240 0 200 20 C220 -10 190 -20 170 10 C170 -30 140 -20 140 20' fill='#e66767' opacity='0.9'/>
+    <ellipse cx='110' cy='80' rx='75' ry='58' fill='#ffffff' stroke='#f8a5c2' stroke-width='4'/>
+    <circle cx='60' cy='95' r='14' fill='#ffb6c1' opacity='0.8'/>
+    <circle cx='160' cy='95' r='14' fill='#ffb6c1' opacity='0.8'/>
+    <circle cx='75' cy='75' r='8' fill='#5e2439'/>
+    <circle cx='145' cy='75' r='8' fill='#5e2439'/>
+    <circle cx='73' cy='72' r='2.5' fill='#ffffff'/>
+    <circle cx='143' cy='72' r='2.5' fill='#ffffff'/>
+    <path d='M95 95 Q110 110 125 95' fill='none' stroke='#5e2439' stroke-width='3.5' stroke-linecap='round'/>
+    <ellipse cx='80' cy='150' rx='14' ry='10' fill='#ffffff'/>
+    <ellipse cx='140' cy='150' rx='14' ry='10' fill='#ffffff'/>
+  </g>
+  
+  <text x='300' y='490' font-family='sans-serif' font-weight='bold' font-size='26' fill='#5e2439' text-anchor='middle'>Santuario VillAxolote</text>
+  <text x='300' y='525' font-family='sans-serif' font-size='18' fill='#88304e' text-anchor='middle'>Música con amor y conciencia natural</text>
+  <text x='110' y='120' font-size='32'>🌸</text>
+  <text x='490' y='140' font-size='32'>✨</text>
+  <text x='470' y='460' font-size='32'>🎵</text>
+  <text x='130' y='440' font-size='32'>💖</text>
+</svg>
