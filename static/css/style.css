@@ -40,36 +40,32 @@
   --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-/* Reset y Base */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* Reset y Base (en @layer base para no pisar utilidades de Tailwind) */
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
 
-html {
-  scroll-behavior: smooth;
-  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  color: var(--text-primary);
-  background-color: var(--pink-50);
-}
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
 
-body {
-  background: var(--bg-gradient);
-  min-height: 100vh;
-  line-height: 1.6;
-  overflow-x: hidden;
-}
+  body {
+    min-height: 100vh;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
 
-a {
-  color: inherit;
-  text-decoration: none;
-  transition: var(--transition);
-}
+  a {
+    text-decoration: none;
+    transition: var(--transition);
+  }
 
-img {
-  max-width: 100%;
-  display: block;
+  img {
+    max-width: 100%;
+    display: block;
+  }
 }
 
 /* Barra superior de anuncios */

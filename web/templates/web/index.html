@@ -4,223 +4,495 @@
 {% block title %}{{ site_config.site_name }} - Página Oficial{% endblock %}
 
 {% block content %}
+<div class="flex flex-col w-full relative overflow-hidden">
 
   <!-- =========================================================================
-       1. HERO CARRUSEL (Administrable con imágenes, clics y auto-play)
+       SECTION 1: HERO DE IMPACTO MUSICAL, CARRUSEL DINÁMICO & REPRODUCTOR FLOTANTE
        ========================================================================= -->
-  <section class="carousel-section" aria-label="Galería de Destacados">
-    <div class="carousel-container">
+  <section class="relative z-10 max-w-7xl mx-auto px-space-md sm:px-space-lg w-full pt-4 pb-space-xl" id="musica">
+    <div class="relative bg-surface-container-lowest/80 dark:bg-[#250d1b]/80 backdrop-blur-xl rounded-[2.5rem] p-4 sm:p-6 shadow-[0_20px_50px_rgba(231,111,138,0.2)] border border-outline-variant/30">
       
-      <!-- Pista de Diapositivas -->
-      <div class="carousel-track" id="carouselTrack">
-        {% for slide in slides %}
-        <div class="carousel-slide" data-index="{{ forloop.counter0 }}">
-          {% if slide.image %}
-            <img src="{{ slide.image.url }}" alt="{{ slide.title }}">
-          {% else %}
-            <img src="{% static 'images/slide_fallback.svg' %}" alt="{{ slide.title }}">
-          {% endif %}
-          
-          <div class="carousel-caption-overlay">
-            <div class="carousel-caption">
-              <h2>{{ slide.title }}</h2>
-              {% if slide.subtitle %}
-                <p>{{ slide.subtitle }}</p>
+      <div class="relative w-full rounded-3xl overflow-hidden shadow-2xl bg-inverse-surface min-h-[600px] flex flex-col justify-between carousel-container-stitch">
+
+        <!-- Barra de progreso animada del Auto-Play del Carrusel -->
+        <div class="absolute top-0 left-0 right-0 h-1.5 bg-white/15 z-30 overflow-hidden">
+          <div id="carouselProgressBar" class="h-full bg-gradient-to-r from-secondary-container via-primary-container to-[#ff4d79] w-0 transition-none"></div>
+        </div>
+        
+        <!-- Pista Deslizante Dinámica del Carrusel -->
+        <div class="relative w-full overflow-hidden flex-1 flex items-stretch">
+          <div class="carousel-track-sliding flex-1" id="carouselTrack">
+            {% for slide in slides %}
+            <div class="carousel-slide-item w-full min-h-[430px] flex items-center relative {% if forloop.first %}is-active{% endif %}" data-index="{{ forloop.counter0 }}">
+              <!-- Imagen de fondo de la diapositiva con efecto Ken Burns -->
+              {% if slide.image %}
+                <div class="carousel-slide-bg absolute inset-0 bg-cover bg-center" style="background-image: url('{{ slide.image.url }}');"></div>
+              {% else %}
+                <div class="carousel-slide-bg absolute inset-0 bg-gradient-to-br from-inverse-surface via-primary to-primary-container"></div>
               {% endif %}
-              
-              <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-                {% if slide.button_text and slide.button_link %}
-                  <a href="{{ slide.button_link }}" class="btn btn-primary" style="padding: 12px 28px; font-size: 1.05rem;">
-                    {{ slide.button_text }}
-                  </a>
+              <div class="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-[#240917]/95 via-[#240917]/75 to-[#240917]/25"></div>
+
+              <!-- Contenido animado del Slide -->
+              <div class="carousel-slide-content relative z-10 p-6 sm:p-12 lg:p-14 w-full max-w-4xl text-on-tertiary">
+                <div class="inline-flex items-center gap-2 bg-primary/70 backdrop-blur-md px-4 py-1.5 rounded-full font-label-sm text-label-sm text-primary-fixed mb-4 border border-primary-container/40 shadow-md">
+                  <span class="material-symbols-outlined text-base text-primary-container animate-spin" style="animation-duration: 4s;">album</span>
+                  <span class="font-bold tracking-wider uppercase">DESTACADO {{ forloop.counter }}/{{ slides|length }} • {{ site_config.site_name|upper }}</span>
+                </div>
+
+                <h1 class="font-headline-lg text-3xl sm:text-5xl lg:text-6xl font-extrabold text-on-tertiary tracking-tight leading-[1.08] mb-4 drop-shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+                  {{ slide.title }}
+                </h1>
+
+                {% if slide.subtitle %}
+                <p class="font-body-lg text-base sm:text-lg text-surface-container-high mb-7 leading-relaxed max-w-2xl font-medium drop-shadow">
+                  {{ slide.subtitle }}
+                </p>
                 {% endif %}
 
+                <!-- Botones CTA del Slide -->
+                <div class="flex flex-wrap items-center gap-3.5">
+                  {% if slide.button_text and slide.button_link %}
+                    <a class="inline-flex items-center gap-2.5 font-label-lg text-label-lg px-7 py-3.5 rounded-full bg-gradient-to-r from-primary-container via-primary to-[#ff4d79] text-on-primary font-bold shadow-[0_8px_24px_rgba(231,111,138,0.6)] hover:scale-105 hover:shadow-[0_12px_30px_rgba(231,111,138,0.8)] transition-all"
+                       href="{{ slide.button_link }}"
+                       {% if 'http' in slide.button_link %}target="_blank" rel="noopener"{% endif %}>
+                      <span>{{ slide.button_text }}</span>
+                    </a>
+                  {% endif %}
+
+                  <a class="inline-flex items-center gap-2 font-label-lg text-label-lg px-6 py-3.5 rounded-full bg-surface-container-lowest/20 backdrop-blur-md text-on-tertiary hover:bg-surface-container-lowest/35 border border-white/20 transition-all font-bold hover:scale-105 play-single-trigger" href="#reproductor">
+                    <span class="material-symbols-outlined text-xl text-primary-container">play_circle</span>
+                    <span>Reproducir Demo 🎵</span>
+                  </a>
+
+                  {% if is_admin %}
+                    <a href="{% url 'slide_edit' slide.id %}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-black/50 hover:bg-primary text-white text-xs font-bold border border-white/25 transition-all">
+                      ✏️ Editar Slide (#{{ slide.order }})
+                    </a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            {% empty %}
+            <!-- Fallback si no hay slides en la BD -->
+            <div class="carousel-slide-item is-active w-full min-h-[430px] flex items-center relative">
+              <div class="absolute inset-0 bg-gradient-to-r from-inverse-surface via-primary to-primary-container"></div>
+              <div class="carousel-slide-content relative z-10 p-6 sm:p-12 lg:p-14 max-w-3xl text-on-tertiary">
+                <h1 class="font-headline-lg text-4xl sm:text-6xl font-extrabold text-white mb-4">
+                  GIRA MÍSTICA <span class="text-secondary-container">2026</span>
+                </h1>
+                <p class="font-body-lg text-surface-container-high mb-6">
+                  El fenómeno de indie dream-pop y sintetizadores ochenteros que conquista escenarios.
+                </p>
                 {% if is_admin %}
-                  <a href="{% url 'slide_edit' slide.id %}" class="admin-bar-quick" title="Editar este slide en el panel">
-                    ✏️ Editar este Slide (#{{ slide.order }})
+                  <a href="{% url 'slide_create' %}" class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary-container text-white font-bold">
+                    ➕ Agregar Primer Slide
                   </a>
                 {% endif %}
               </div>
             </div>
+            {% endfor %}
+          </div>
+
+          <!-- Controles Laterales del Carrusel (Flechas Izq / Der) -->
+          {% if slides|length > 1 %}
+          <button type="button" id="carouselPrev" aria-label="Diapositiva anterior" class="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-black/45 hover:bg-primary text-white backdrop-blur-md border border-white/30 flex items-center justify-center transition-all hover:scale-110 shadow-xl">
+            <span class="material-symbols-outlined text-2xl">chevron_left</span>
+          </button>
+          <button type="button" id="carouselNext" aria-label="Diapositiva siguiente" class="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-black/45 hover:bg-primary text-white backdrop-blur-md border border-white/30 flex items-center justify-center transition-all hover:scale-110 shadow-xl">
+            <span class="material-symbols-outlined text-2xl">chevron_right</span>
+          </button>
+          {% endif %}
+        </div>
+
+        <!-- Barra Inferior del Hero: Mini Reproductor Interactivo + Indicadores del Carrusel -->
+        <div id="reproductor" class="relative z-20 px-6 sm:px-12 lg:px-14 pb-8 pt-2 flex flex-col lg:flex-row items-start lg:items-end justify-between gap-6 bg-gradient-to-t from-[#16050e]/95 via-[#16050e]/70 to-transparent">
+          
+          <!-- MINI REPRODUCTOR DE AUDIO FLOTANTE INTERACTIVO -->
+          <div class="bg-surface-container-lowest/15 dark:bg-black/50 backdrop-blur-xl border border-white/20 rounded-2xl p-4 w-full max-w-xl shadow-[0_12px_32px_rgba(0,0,0,0.4)]">
+            <div class="flex items-center gap-4">
+              <!-- Portada Álbum -->
+              <div class="w-16 h-16 rounded-xl overflow-hidden shrink-0 shadow-md ring-2 ring-primary-container/60 relative bg-primary/30 flex items-center justify-center">
+                {% if products.first and products.first.image %}
+                  <img alt="{{ products.first.name }}" class="w-full h-full object-cover" src="{{ products.first.image.url }}"/>
+                {% else %}
+                  <span class="text-3xl">🎵</span>
+                {% endif %}
+              </div>
+
+              <!-- Track Info & Soundwave -->
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2 mb-1">
+                  <span class="font-headline-sm text-sm font-bold text-white truncate" id="player-track-name">01. Que me beses</span>
+                  <span class="text-[11px] font-bold text-primary-container uppercase tracking-wider bg-primary/40 px-2 py-0.5 rounded-full" id="player-status-badge">Sintetizador Listo</span>
+                </div>
+                <!-- Soundwave animated bars -->
+                <div class="flex items-end gap-1 h-6 mb-2">
+                  <span class="w-1 bg-primary-container rounded-full wave-bar-1"></span>
+                  <span class="w-1 bg-[#ff99b8] rounded-full wave-bar-2"></span>
+                  <span class="w-1 bg-white rounded-full wave-bar-3"></span>
+                  <span class="w-1 bg-primary-container rounded-full wave-bar-4"></span>
+                  <span class="w-1 bg-secondary-container rounded-full wave-bar-5"></span>
+                  <span class="w-1 bg-primary-container rounded-full wave-bar-2"></span>
+                  <span class="w-1 bg-white rounded-full wave-bar-4"></span>
+                  <span class="w-1 bg-[#ff99b8] rounded-full wave-bar-1"></span>
+                </div>
+                <!-- Time display -->
+                <div class="flex items-center justify-between text-[11px] text-surface-container-high font-mono">
+                  <span id="track-current-time">00:00</span>
+                  <div class="w-full h-1.5 bg-white/20 rounded-full overflow-hidden mx-2 cursor-pointer" id="player-progress-bar">
+                    <div class="bg-gradient-to-r from-primary to-primary-container h-full w-[35%] rounded-full transition-all duration-300" id="player-progress-fill"></div>
+                  </div>
+                  <span id="track-total-time">03:24</span>
+                </div>
+              </div>
+
+              <!-- Controls -->
+              <div class="flex items-center gap-1 shrink-0">
+                <button type="button" class="w-11 h-11 rounded-full bg-primary-container text-on-primary flex items-center justify-center hover:scale-110 shadow-lg transition-transform" id="player-toggle-btn" title="Reproducir / Pausar">
+                  <span class="material-symbols-outlined text-2xl" id="player-icon">play_arrow</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Selector de Temas Reales de los Discos de la Banda -->
+            <div class="mt-3 pt-2.5 border-t border-white/10 flex items-center gap-2 overflow-x-auto text-xs pb-1">
+              <span class="text-[11px] text-surface-container-high uppercase font-bold shrink-0">Temas:</span>
+              <button type="button" class="track-btn px-2.5 py-1 rounded-full bg-primary-container text-white font-bold shrink-0 transition-all text-xs" data-track="01. Que me beses" data-duration="03:24" data-tempo="128">01. Que me beses</button>
+              <button type="button" class="track-btn px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 text-white shrink-0 transition-all text-xs" data-track="02. Disparo de Amor (Holi <3)" data-duration="02:58" data-tempo="136">02. Disparo de Amor</button>
+              <button type="button" class="track-btn px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 text-white shrink-0 transition-all text-xs" data-track="03. ROSAS y ESPINAS (4Ever)" data-duration="03:45" data-tempo="118">03. ROSAS y ESPINAS</button>
+              <button type="button" class="track-btn px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 text-white shrink-0 transition-all text-xs" data-track="04. Trececatorce (Salu2)" data-duration="03:12" data-tempo="124">04. Trececatorce</button>
+            </div>
+          </div>
+
+          <!-- Puntos del Carrusel (Dots) y Acceso Admin -->
+          <div class="flex flex-col items-end gap-2 self-end">
+            <div class="flex items-center gap-2" id="carouselDots"></div>
+            {% if is_admin %}
+              <a href="/panel/?tab=carrusel" class="text-xs font-bold text-primary-fixed hover:underline flex items-center gap-1">
+                <span>⚙️ Administrar Carrusel ({{ slides|length }} slides)</span>
+              </a>
+            {% endif %}
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =========================================================================
+       SECTION 2: SOBRE LA BANDA / BIOGRAFÍA (HISTORIA, SONIDO & ESTADÍSTICAS)
+       ========================================================================= -->
+  <section class="relative z-10 max-w-7xl mx-auto px-space-md sm:px-space-lg w-full py-space-xl" id="la-banda">
+    <div id="biografia" class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
+      
+      <!-- Visual / Band Portrait Column (5 Cols) -->
+      <div class="lg:col-span-5 flex flex-col gap-4">
+        <div class="relative rounded-3xl overflow-hidden bg-surface-container shadow-[0_16px_40px_rgba(94,36,57,0.15)] group border border-outline-variant/30">
+          {% if bio.image %}
+            <img alt="{{ bio.title }}" class="w-full aspect-square object-cover transition-transform duration-500 group-hover:scale-105" src="{{ bio.image.url }}"/>
+          {% else %}
+            <div class="w-full aspect-square flex items-center justify-center bg-surface-container text-7xl">🦎</div>
+          {% endif %}
+          <div class="absolute top-4 left-4 bg-surface-container-lowest/90 dark:bg-[#200c17]/90 backdrop-blur-md px-3.5 py-1.5 rounded-full flex items-center gap-2 shadow-sm border border-outline-variant/30">
+            <span class="material-symbols-outlined text-primary text-base">graphic_eq</span>
+            <span class="font-label-sm text-label-sm text-on-surface dark:text-[#ffecef] font-bold">Indie Pop / Dream Synth</span>
+          </div>
+        </div>
+
+        <!-- Cita Destacada Enmarcada (Debajo de la imagen, sin taparla nunca) -->
+        {% if bio.quote %}
+        <div class="bg-surface-container-low dark:bg-[#280f20] p-6 rounded-2xl shadow-sm relative overflow-hidden border border-outline-variant/30 border-l-4 border-l-primary">
+          <div class="absolute -right-4 -bottom-4 text-secondary-container/30 dark:text-secondary/20">
+            <span class="material-symbols-outlined text-7xl select-none">format_quote</span>
+          </div>
+          <p class="font-headline-sm text-lg sm:text-xl text-primary dark:text-[#ffb2bf] italic leading-relaxed relative z-10 font-bold">
+            {{ bio.quote }}
+          </p>
+          <span class="block font-label-sm text-label-sm text-on-surface-variant dark:text-surface-container-high uppercase tracking-wider mt-2 font-semibold">
+            — Manifiesto {{ site_config.site_name }}
+          </span>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Informative Column (7 Cols) -->
+      <div class="lg:col-span-7 flex flex-col justify-center">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <div class="inline-flex items-center gap-2 bg-secondary-container dark:bg-tertiary/40 text-on-secondary-container dark:text-tertiary-fixed px-4 py-1.5 rounded-full font-label-sm text-label-sm font-bold">
+            <span class="material-symbols-outlined text-base">music_note</span>
+            <span>Nuestra Historia y Sonido</span>
+          </div>
+          {% if is_admin %}
+            <a href="{% url 'bio_edit' %}" class="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-primary text-white text-xs font-bold shadow-sm hover:scale-105 transition-all">
+              ✏️ Editar Biografía
+            </a>
+          {% endif %}
+        </div>
+
+        <h2 class="font-headline-lg text-3xl sm:text-5xl text-on-surface dark:text-[#ffecef] font-extrabold tracking-tight mb-3">
+          {{ bio.title }}
+        </h2>
+        <p class="font-headline-sm text-lg text-primary dark:text-[#ffb2bf] font-semibold mb-5">
+          {{ bio.subtitle }}
+        </p>
+
+        <p class="font-body-lg text-body-lg text-on-surface-variant dark:text-surface-container-high mb-4 leading-relaxed font-medium">
+          {{ bio.body_1|linebreaksbr }}
+        </p>
+        {% if bio.body_2 %}
+        <p class="font-body-md text-body-md text-on-surface-variant dark:text-surface-container-high mb-8 leading-relaxed">
+          {{ bio.body_2|linebreaksbr }}
+        </p>
+        {% endif %}
+
+        <!-- 3 Tarjetas de Estadísticas Musicales Dinámicas -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="bg-surface-container-lowest/90 dark:bg-[#280f20]/90 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-outline-variant/30 text-center hover:-translate-y-1 transition-transform">
+            <span class="font-headline-lg text-3xl sm:text-4xl font-extrabold text-primary dark:text-[#ffb2bf] block mb-1">{{ bio.stat_1_number }}</span>
+            <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant dark:text-surface-container-high font-bold">{{ bio.stat_1_label }}</span>
+          </div>
+          <div class="bg-surface-container-lowest/90 dark:bg-[#280f20]/90 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-outline-variant/30 text-center hover:-translate-y-1 transition-transform">
+            <span class="font-headline-lg text-3xl sm:text-4xl font-extrabold text-primary dark:text-[#ffb2bf] block mb-1">{{ bio.stat_2_number }}</span>
+            <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant dark:text-surface-container-high font-bold">{{ bio.stat_2_label }}</span>
+          </div>
+          <div class="bg-surface-container-lowest/90 dark:bg-[#280f20]/90 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-outline-variant/30 text-center hover:-translate-y-1 transition-transform">
+            <span class="font-headline-lg text-3xl sm:text-4xl font-extrabold text-primary dark:text-[#ffb2bf] block mb-1">{{ bio.stat_3_number }}</span>
+            <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant dark:text-surface-container-high font-bold">{{ bio.stat_3_label }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- =========================================================================
+       SECTION 3: TOUR DATES (GIRA MÍSTICA 2026 EN VIVO - DINÁMICO DESDE BD)
+       ========================================================================= -->
+  <section class="relative z-10 max-w-7xl mx-auto px-space-md sm:px-space-lg w-full py-space-xl" id="gira-2026">
+    <div id="conciertos" class="bg-surface-container-lowest/90 dark:bg-[#220c1a]/90 backdrop-blur-xl rounded-[2.5rem] p-6 sm:p-10 shadow-lg border border-outline-variant/30">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+        <div>
+          <div class="inline-flex items-center gap-1.5 bg-primary/10 dark:bg-primary/30 text-primary dark:text-tertiary-fixed px-3.5 py-1.5 rounded-full font-label-sm text-label-sm mb-2 font-bold">
+            <span class="material-symbols-outlined text-base">theater_comedy</span>
+            <span>Tour Internacional en Vivo</span>
+          </div>
+          <h2 class="font-headline-lg text-3xl sm:text-4xl text-on-surface dark:text-[#ffecef] font-bold">
+            Fechas Confirmadas: Gira Mística 2026
+          </h2>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="font-label-sm text-label-sm text-on-surface-variant dark:text-surface-container-high bg-surface-container dark:bg-inverse-surface px-4 py-1.5 rounded-full font-bold">
+            Teatros y Estadios • En Vivo
+          </span>
+          {% if is_admin %}
+            <a href="{% url 'concert_create' %}" class="px-4 py-1.5 rounded-full bg-primary text-white text-xs font-bold hover:scale-105 transition-all">
+              ➕ Agregar Concierto
+            </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Concert Date Cards Dinámicas -->
+      <div class="flex flex-col gap-4">
+        {% for concert in concerts %}
+        <div class="bg-surface-container-low/90 dark:bg-[#2d1225] p-5 rounded-2xl shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border {% if concert.status == 'agotado' %}border-outline-variant/20 opacity-80{% else %}border-primary-container/40 hover:border-primary{% endif %} transition-all">
+          <div class="flex items-center gap-4">
+            <div class="flex flex-col items-center justify-center w-16 h-16 rounded-2xl {% if concert.status == 'agotado' %}bg-surface-container dark:bg-inverse-surface{% elif concert.status == 'ultimas' %}bg-secondary-container dark:bg-secondary{% else %}bg-primary-container dark:bg-primary{% endif %} text-center shrink-0">
+              <span class="font-label-sm text-xs uppercase font-extrabold {% if concert.status == 'disponible' %}text-white{% else %}text-secondary dark:text-white{% endif %}">{{ concert.date|date:"M" }}</span>
+              <span class="font-headline-sm text-2xl font-black {% if concert.status == 'disponible' %}text-white{% else %}text-primary dark:text-white{% endif %} leading-none">{{ concert.date|date:"d" }}</span>
+            </div>
+            <div>
+              <span class="font-headline-sm text-xl text-on-surface dark:text-white font-bold block">{{ concert.city }}</span>
+              <span class="font-body-sm text-body-sm text-on-surface-variant dark:text-surface-container-high font-medium">
+                {{ concert.venue }} &bull; {{ concert.date|date:"H:i" }} hrs &bull; <em class="text-primary dark:text-[#ffb2bf] not-italic font-semibold">{{ concert.title }}</em>
+              </span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end flex-wrap">
+            {% if concert.status == 'agotado' %}
+              <span class="font-label-sm text-xs bg-surface-container-highest dark:bg-inverse-surface text-on-surface-variant dark:text-surface-container-high px-3 py-1 rounded-full font-bold uppercase tracking-wider">
+                [SOLD OUT]
+              </span>
+              <button class="font-label-sm text-xs px-5 py-2.5 rounded-full bg-outline-variant/30 text-on-surface-variant cursor-not-allowed font-bold" disabled>
+                Agotado
+              </button>
+            {% elif concert.status == 'ultimas' %}
+              <span class="font-label-sm text-xs bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-bold uppercase tracking-wider">
+                [ÚLTIMOS BOLETOS 🔥]
+              </span>
+              <a class="font-label-sm text-xs px-5 py-2.5 rounded-full bg-gradient-to-r from-primary to-primary-container text-on-primary hover:scale-105 font-bold shadow-md transition-all flex items-center gap-1.5"
+                 href="{{ concert.ticket_link }}"
+                 onclick="if(this.getAttribute('href')==='#'){ alert('🎟️ Reservando entradas para {{ concert.city }} ({{ concert.venue }}). ¡Últimos boletos disponibles!'); return false; }">
+                <span>Comprar Tickets</span>
+                <span>🎟️</span>
+              </a>
+            {% elif concert.status == 'proximo' %}
+              <span class="font-label-sm text-xs bg-surface-container dark:bg-inverse-surface text-on-surface dark:text-surface-container-high px-3 py-1 rounded-full font-bold uppercase tracking-wider">
+                [PRÓXIMAMENTE ⏳]
+              </span>
+              <button type="button" class="font-label-sm text-xs px-5 py-2.5 rounded-full bg-surface-container dark:bg-inverse-surface text-on-surface dark:text-white hover:bg-primary hover:text-white font-bold transition-all"
+                      onclick="alert('🔔 Te notificaremos apenas se habilite la preventa para {{ concert.city }}.')">
+                Avisarme 🔔
+              </button>
+            {% else %}
+              <span class="font-label-sm text-xs bg-primary/20 text-primary dark:text-[#ffb2bf] px-3 py-1 rounded-full font-bold uppercase tracking-wider">
+                [ENTRADAS DISPONIBLES]
+              </span>
+              <a class="font-label-sm text-xs px-5 py-2.5 rounded-full bg-gradient-to-r from-primary to-primary-container text-on-primary hover:scale-105 font-bold shadow-md transition-all flex items-center gap-1.5"
+                 href="{{ concert.ticket_link }}"
+                 onclick="if(this.getAttribute('href')==='#'){ alert('🎟️ Redirigiendo a boletería oficial para {{ concert.city }} ({{ concert.venue }})...'); return false; }">
+                <span>Comprar Tickets</span>
+                <span>🎟️</span>
+              </a>
+            {% endif %}
+
+            {% if is_admin %}
+              <a href="{% url 'concert_edit' concert.id %}" class="text-xs font-bold text-primary dark:text-[#ffb2bf] hover:underline px-2 py-1">
+                ✏️ Editar
+              </a>
+            {% endif %}
           </div>
         </div>
         {% empty %}
-        <!-- Diapositiva por defecto si no hay ninguna creada aún -->
-        <div class="carousel-slide">
-          <div class="carousel-caption-overlay" style="background: linear-gradient(135deg, #ffd1dc, #f8a5c2);">
-            <div class="carousel-caption">
-              <h2>🌸 Bienvenidos al Universo VillAxolote</h2>
-              <p>Música, tienda oficial y noticias del mundo anfibio más tierno.</p>
-              {% if is_admin %}
-                <a href="{% url 'slide_create' %}" class="btn btn-admin">
-                  ➕ Agregar Primer Slide
-                </a>
-              {% endif %}
-            </div>
-          </div>
-        </div>
+        <p class="text-center py-8 text-on-surface-variant dark:text-surface-container-high">
+          Pronto anunciaremos nuevas fechas de la gira.
+        </p>
         {% endfor %}
       </div>
 
-      <!-- Flechas Interactivas para Mover con Clics -->
-      <button class="carousel-btn carousel-btn-prev" id="carouselPrev" aria-label="Diapositiva anterior">
-        ❮
-      </button>
-      <button class="carousel-btn carousel-btn-next" id="carouselNext" aria-label="Diapositiva siguiente">
-        ❯
-      </button>
-
-      <!-- Indicadores de Puntos (Dots) -->
-      <div class="carousel-dots" id="carouselDots"></div>
+      <!-- Barra enlace VIP & Fechas mundiales -->
+      <div class="mt-8 pt-6 border-t border-outline-variant/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary dark:text-[#ffb2bf]">airplane_ticket</span>
+          <span class="font-body-md font-bold text-on-surface dark:text-white">¿Quieres ver a {{ site_config.site_name }} en tu ciudad?</span>
+        </div>
+        <a class="font-label-md font-bold text-primary dark:text-[#ffb2bf] hover:underline flex items-center gap-1.5" href="{% url 'register' %}">
+          <span>Unirse al Fan Club &amp; Meet &amp; Greet VIP</span>
+          <span class="material-symbols-outlined text-base">arrow_forward</span>
+        </a>
+      </div>
     </div>
-
-    <!-- Acceso rápido para administradores -->
-    {% if is_admin %}
-    <div style="text-align: right; margin-top: 10px;">
-      <a href="/panel/?tab=carrusel" class="admin-bar-quick">
-        ⚙️ Administrar Carrusel en Panel Personalizado
-      </a>
-    </div>
-    {% endif %}
   </section>
 
 
   <!-- =========================================================================
-       2. SECCIÓN: BIOGRAFÍA (#biografia)
+       SECTION 4: TIENDA DE MERCH OFICIAL DE LA BANDA (DINÁMICA DESDE BD)
        ========================================================================= -->
-  <section id="biografia" class="section">
-    <div class="section-header">
-      <span class="section-tag">Nuestra Historia</span>
-      <h2 class="section-title">{{ bio.title }}</h2>
-      <p class="section-subtitle">{{ bio.subtitle }}</p>
-      {% if is_admin %}
-        <div style="margin-top: 12px;">
-          <a href="{% url 'bio_edit' %}" class="admin-bar-quick">
-            ✏️ Editar Textos y Datos de Biografía
+  <section class="relative z-10 max-w-7xl mx-auto px-space-md sm:px-space-lg w-full py-space-xl" id="tienda">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+      <div>
+        <div class="inline-flex items-center gap-1.5 bg-secondary-container/40 dark:bg-tertiary/30 text-primary dark:text-[#ffb2bf] px-3.5 py-1.5 rounded-full font-label-sm text-label-sm mb-3 font-bold">
+          <span class="material-symbols-outlined text-base">album</span>
+          <span>Tienda Oficial de la Banda</span>
+        </div>
+        <h2 class="font-headline-lg text-3xl sm:text-5xl text-on-surface dark:text-[#ffecef] font-bold tracking-tight">
+          Discografía en Vinilo &amp; Merch Oficial
+        </h2>
+      </div>
+      <div class="flex flex-col items-start sm:items-end gap-2">
+        <p class="font-body-md text-on-surface-variant dark:text-surface-container-high max-w-md font-medium sm:text-right">
+          Ediciones oficiales en vinilo, ropa y coleccionables diseñados con la estética de {{ site_config.site_name }}.
+        </p>
+        {% if is_admin %}
+          <a href="{% url 'product_create' %}" class="px-4 py-2 rounded-full bg-primary text-white text-xs font-bold shadow-sm hover:scale-105 transition-all">
+            ➕ Agregar Producto a Tienda
           </a>
-        </div>
-      {% endif %}
-    </div>
-
-    <div class="bio-wrapper">
-      <!-- Columna Imagen -->
-      <div class="bio-image-col">
-        <div class="bio-image-frame">
-          {% if bio.image %}
-            <img src="{{ bio.image.url }}" alt="{{ bio.title }}">
-          {% else %}
-            <div style="height: 380px; display: flex; align-items: center; justify-content: center; background: #ffe5ec; font-size: 5rem;">
-              🦎
-            </div>
-          {% endif %}
-        </div>
-        {% if bio.quote %}
-        <div class="bio-quote-bubble">
-          {{ bio.quote }}
-        </div>
         {% endif %}
       </div>
+    </div>
 
-      <!-- Columna Texto y Estadísticas -->
-      <div class="bio-content">
-        <div class="bio-text">
-          <p>{{ bio.body_1|linebreaksbr }}</p>
-          {% if bio.body_2 %}
-            <p>{{ bio.body_2|linebreaksbr }}</p>
-          {% endif %}
-        </div>
+    <!-- Merch Filter Pills (Sincronizados con las categorías reales de Product) -->
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-10">
+      <div class="flex flex-wrap items-center gap-2.5" id="store-filters">
+        <button class="store-filter-btn px-4 py-2 rounded-full font-label-md text-label-md bg-primary-container text-on-primary font-bold shadow-md transition-all" data-filter="all" type="button">
+          Todo el Merch ({{ products|length }})
+        </button>
+        <button class="store-filter-btn px-4 py-2 rounded-full font-label-md text-label-md bg-surface-container dark:bg-inverse-surface text-on-surface-variant dark:text-surface-container-high hover:text-primary transition-all font-semibold" data-filter="musica" type="button">
+          🎵 Vinilos &amp; Álbumes
+        </button>
+        <button class="store-filter-btn px-4 py-2 rounded-full font-label-md text-label-md bg-surface-container dark:bg-inverse-surface text-on-surface-variant dark:text-surface-container-high hover:text-primary transition-all font-semibold" data-filter="ropa" type="button">
+          👚 Ropa &amp; Hoodies
+        </button>
+        <button class="store-filter-btn px-4 py-2 rounded-full font-label-md text-label-md bg-surface-container dark:bg-inverse-surface text-on-surface-variant dark:text-surface-container-high hover:text-primary transition-all font-semibold" data-filter="coleccionables" type="button">
+          ✨ Coleccionables &amp; Peluches
+        </button>
+        <button class="store-filter-btn px-4 py-2 rounded-full font-label-md text-label-md bg-surface-container dark:bg-inverse-surface text-on-surface-variant dark:text-surface-container-high hover:text-primary transition-all font-semibold" data-filter="accesorios" type="button">
+          🎀 Stickers &amp; Accesorios
+        </button>
+      </div>
 
-        <!-- Cifras destacadas dinámicas -->
-        <div class="bio-stats">
-          <div class="stat-item">
-            <div class="stat-number">{{ bio.stat_1_number }}</div>
-            <div class="stat-label">{{ bio.stat_1_label }}</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number">{{ bio.stat_2_number }}</div>
-            <div class="stat-label">{{ bio.stat_2_label }}</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number">{{ bio.stat_3_number }}</div>
-            <div class="stat-label">{{ bio.stat_3_label }}</div>
-          </div>
-        </div>
+      <!-- Contador interactivo del Carrito -->
+      <div class="inline-flex items-center gap-2 bg-surface-container-low dark:bg-[#280f20] px-4 py-2 rounded-full border border-outline-variant/40 shadow-sm">
+        <span class="material-symbols-outlined text-primary dark:text-[#ffb2bf] text-lg">shopping_bag</span>
+        <span class="text-xs font-bold text-on-surface dark:text-white">Carrito: <strong id="cart-count-badge" class="text-primary dark:text-[#ffb2bf]">0</strong> artículos</span>
       </div>
     </div>
-  </section>
 
-
-  <!-- =========================================================================
-       3. SECCIÓN: TIENDA OFICIAL (#tienda)
-       ========================================================================= -->
-  <section id="tienda" class="section">
-    <div class="section-header">
-      <span class="section-tag">Merch & Colección</span>
-      <h2 class="section-title">Tienda Oficial VillAxolote</h2>
-      <p class="section-subtitle">Productos diseñados con la estética rosa pastel más tierna y materiales premium.</p>
-      {% if is_admin %}
-        <div style="margin-top: 12px;">
-          <a href="/panel/?tab=tienda" class="admin-bar-quick">
-            ✏️ Administrar Tienda en Panel Personalizado
-          </a>
-        </div>
-      {% endif %}
-    </div>
-
-    <!-- Filtros de Categoría -->
-    <div class="shop-filters">
-      <button class="filter-btn active" data-filter="all">🌸 Todos los Artículos</button>
-      <button class="filter-btn" data-filter="ropa">👚 Ropa & Moda</button>
-      <button class="filter-btn" data-filter="musica">🎵 Vinilos & Álbumes</button>
-      <button class="filter-btn" data-filter="coleccionables">✨ Peluches & Coleccionables</button>
-      <button class="filter-btn" data-filter="accesorios">🎀 Accesorios & Stickers</button>
-    </div>
-
-    <!-- Cuadrícula de Productos -->
-    <div class="products-grid">
+    <!-- Merch Bento Grid Dinámico -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="products-grid">
       {% for product in products %}
-      <div class="product-card" data-category="{{ product.category }}">
-        <div class="product-image-wrap">
-          {% if product.image %}
-            <img src="{{ product.image.url }}" alt="{{ product.name }}">
-          {% else %}
-            <div style="height: 100%; display: flex; align-items: center; justify-content: center; background: #ffd1dc; font-size: 3rem;">
-              🎁
-            </div>
-          {% endif %}
-          
-          {% if product.badge %}
-            <span class="product-badge">{{ product.badge }}</span>
-          {% endif %}
-        </div>
+      <div class="product-card-stitch bg-surface-container-lowest/90 dark:bg-[#250d1b]/90 backdrop-blur-md rounded-3xl p-4 shadow-sm hover:shadow-[0_16px_36px_rgba(231,111,138,0.22)] transition-all flex flex-col justify-between group border border-outline-variant/30" data-category="{{ product.category }}">
+        <div>
+          <div class="relative w-full aspect-square rounded-2xl overflow-hidden bg-surface-container mb-4">
+            {% if product.image %}
+              <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"/>
+            {% else %}
+              <div class="w-full h-full flex items-center justify-center text-5xl bg-surface-container">🎁</div>
+            {% endif %}
 
-        <div class="product-info">
-          <span class="product-cat">{{ product.get_category_display }}</span>
-          <h3 class="product-title">{{ product.name }}</h3>
-          <p class="product-desc">{{ product.description }}</p>
-          
-          <div class="product-footer">
-            <span class="product-price">${{ product.price }}</span>
-            <button type="button" class="btn btn-primary" style="padding: 8px 18px; font-size: 0.88rem;" onclick="alert('🌸 ¡Gracias por tu interés en {{ product.name }}! La pasarela de pago o reserva se abrirá pronto.')">
-              Comprar 🛍️
-            </button>
+            {% if product.badge %}
+            <span class="absolute top-3 left-3 bg-primary text-white px-3 py-1 rounded-full font-label-sm text-label-sm font-bold shadow-sm">
+              {{ product.badge }}
+            </span>
+            {% endif %}
+          </div>
+
+          <span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary dark:text-tertiary-fixed block mb-1 font-bold">
+            {{ product.get_category_display }}
+          </span>
+          <h3 class="font-headline-sm text-lg text-on-surface dark:text-white font-bold mb-2 group-hover:text-primary dark:group-hover:text-primary-fixed transition-colors">
+            {{ product.name }}
+          </h3>
+          <div class="font-body-sm text-xs text-on-surface-variant dark:text-surface-container-high mb-4 max-h-28 overflow-y-auto pr-1 leading-relaxed bg-surface-container-low/60 dark:bg-black/25 p-2.5 rounded-xl border border-outline-variant/20">
+            {{ product.description|linebreaksbr }}
           </div>
         </div>
 
-        {% if is_admin %}
-          <div style="padding: 6px 14px; background: rgba(94, 36, 57, 0.05); text-align: center; border-top: 1px solid var(--border-pink);">
-            <a href="{% url 'product_edit' product.id %}" style="font-size: 0.8rem; color: var(--pink-800); font-weight: 700;">
+        <div>
+          <div class="pt-2 pb-3 border-t border-outline-variant/20 flex items-center justify-between">
+            <span class="font-headline-md text-2xl font-black text-on-surface dark:text-white">${{ product.price }}</span>
+            <span class="text-xs text-primary dark:text-[#ffb2bf] font-bold">Stock: {{ product.stock }}</span>
+          </div>
+
+          <button class="add-to-cart-btn w-full py-2.5 rounded-full bg-gradient-to-r from-primary to-primary-container hover:from-primary-container hover:to-primary text-on-primary font-bold flex items-center justify-center gap-2 shadow-sm hover:scale-[1.02] transition-all"
+                  type="button"
+                  data-name="{{ product.name }}"
+                  data-price="{{ product.price }}">
+            <span class="material-symbols-outlined text-lg">shopping_cart</span>
+            <span>Agregar al Carrito</span>
+          </button>
+
+          {% if is_admin %}
+          <div class="mt-2.5 text-center">
+            <a href="{% url 'product_edit' product.id %}" class="text-xs font-bold text-primary dark:text-[#ffb2bf] hover:underline">
               ✏️ Editar Producto en Panel
             </a>
           </div>
-        {% endif %}
+          {% endif %}
+        </div>
       </div>
       {% empty %}
-      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: var(--surface-card); border-radius: var(--radius-lg); border: 1px dashed var(--pink-400);">
-        <p style="font-size: 1.1rem; color: var(--text-secondary);">Pronto agregaremos nuevos productos mágicos a la tienda.</p>
+      <div class="col-span-full text-center py-12 bg-surface-container-lowest/80 dark:bg-[#250d1b]/80 rounded-3xl border border-dashed border-primary-container">
+        <p class="text-on-surface-variant dark:text-surface-container-high mb-3">Pronto agregaremos nuevos productos oficiales a la tienda.</p>
         {% if is_admin %}
-          <a href="{% url 'product_create' %}" class="btn btn-admin" style="margin-top: 14px;">
-            ➕ Agregar Nuevo Producto
+          <a href="{% url 'product_create' %}" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-primary text-white text-xs font-bold">
+            ➕ Agregar Primer Producto
           </a>
         {% endif %}
       </div>
@@ -230,115 +502,78 @@
 
 
   <!-- =========================================================================
-       4. SECCIÓN: CONCIERTOS Y NOTICIAS (#conciertos-noticias)
+       SECTION 5: ÚLTIMAS NOTICIAS & ESTRENOS (DINÁMICAS DESDE BD)
        ========================================================================= -->
-  <section id="conciertos-noticias" class="section">
-    <div class="section-header">
-      <span class="section-tag">En Vivo & Novedades</span>
-      <h2 class="section-title">Conciertos y Noticias</h2>
-      <p class="section-subtitle">Fechas de nuestra gira rosa y las últimas novedades de nuestro ecosistema.</p>
-      {% if is_admin %}
-        <div style="margin-top: 12px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
-          <a href="/panel/?tab=conciertos" class="admin-bar-quick">
-            ✏️ Administrar Conciertos en Panel
-          </a>
-          <a href="/panel/?tab=noticias" class="admin-bar-quick">
-            ✏️ Administrar Noticias en Panel
-          </a>
+  <section class="relative z-10 max-w-7xl mx-auto px-space-md sm:px-space-lg w-full py-space-xl" id="noticias">
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+      <div>
+        <div class="inline-flex items-center gap-1.5 bg-primary/10 dark:bg-primary/30 text-primary dark:text-[#ffb2bf] px-3.5 py-1.5 rounded-full font-label-sm text-label-sm mb-2 font-bold">
+          <span class="material-symbols-outlined text-base">campaign</span>
+          <span>Sala de Prensa &amp; Lanzamientos</span>
         </div>
+        <h2 class="font-headline-lg text-3xl sm:text-4xl text-on-surface dark:text-[#ffecef] font-bold">
+          Últimas Noticias &amp; Estrenos
+        </h2>
+      </div>
+      {% if is_admin %}
+        <a href="{% url 'news_create' %}" class="px-4 py-2 rounded-full bg-primary text-white text-xs font-bold hover:scale-105 transition-all">
+          ➕ Publicar Noticia
+        </a>
       {% endif %}
     </div>
 
-    <div class="concerts-news-grid">
-      
-      <!-- Columna 1: Conciertos -->
-      <div id="conciertos">
-        <h3 class="subcol-title">
-          <span>Próximos Conciertos 🎟️</span>
-          {% if is_admin %}
-            <a href="{% url 'concert_create' %}" style="font-size: 0.8rem; color: var(--pink-700);">+ Agregar Show</a>
-          {% endif %}
-        </h3>
-
-        <div class="concert-list">
-          {% for concert in concerts %}
-          <div class="concert-card">
-            <div class="concert-date-badge">
-              <div class="concert-day">{{ concert.date|date:"d" }}</div>
-              <div class="concert-month">{{ concert.date|date:"M" }}</div>
-            </div>
-
-            <div class="concert-details">
-              <div class="concert-city">{{ concert.city }}</div>
-              <div class="concert-venue">{{ concert.venue }} &bull; {{ concert.date|date:"H:i" }} hrs</div>
-              <div class="concert-status status-{{ concert.status }}">
-                {{ concert.get_status_display }}
-              </div>
-            </div>
-
-            <div>
-              {% if concert.status == 'agotado' %}
-                <span class="btn btn-secondary" style="opacity: 0.6; cursor: not-allowed; padding: 8px 16px; font-size: 0.85rem;">
-                  Agotado
-                </span>
-              {% else %}
-                <a href="{{ concert.ticket_link }}" class="btn btn-primary" style="padding: 8px 18px; font-size: 0.88rem;" onclick="if(this.getAttribute('href')==='#'){ alert('🎟️ Las entradas para {{ concert.city }} estarán disponibles a través de Ticketmaster.'); return false; }">
-                  Tickets
-                </a>
-              {% endif %}
-            </div>
-          </div>
-          {% empty %}
-          <p style="color: var(--text-secondary); text-align: center; padding: 30px; background: var(--surface-card); border-radius: var(--radius-md);">
-            No hay fechas anunciadas en este momento. ¡Atentos a nuestras redes!
-          </p>
-          {% endfor %}
-        </div>
-      </div>
-
-      <!-- Columna 2: Noticias -->
-      <div id="noticias">
-        <h3 class="subcol-title">
-          <span>Últimas Noticias 📰</span>
-          {% if is_admin %}
-            <a href="{% url 'news_create' %}" style="font-size: 0.8rem; color: var(--pink-700);">+ Publicar Noticia</a>
-          {% endif %}
-        </h3>
-
-        <div class="news-list">
-          {% for news in news_items %}
-          <article class="news-card">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {% for news in news_items %}
+      <article class="bg-surface-container-lowest/90 dark:bg-[#250d1b]/90 backdrop-blur-md p-5 rounded-3xl shadow-sm border border-outline-variant/30 flex flex-col justify-between group hover:shadow-lg transition-all">
+        <div>
+          <div class="w-full aspect-video rounded-2xl overflow-hidden bg-surface-container mb-4 relative">
             {% if news.image %}
-              <img src="{{ news.image.url }}" alt="{{ news.title }}" class="news-img">
+              <img src="{{ news.image.url }}" alt="{{ news.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"/>
             {% else %}
-              <div class="news-img" style="display: flex; align-items: center; justify-content: center; font-size: 2rem;">
-                🌸
-              </div>
+              <div class="w-full h-full flex items-center justify-center text-4xl bg-surface-container">🌸</div>
             {% endif %}
+            <span class="absolute bottom-3 right-3 bg-primary text-white text-[11px] font-bold px-2.5 py-0.5 rounded-md shadow">
+              {{ news.tag }}
+            </span>
+          </div>
 
-            <div class="news-body" style="flex-grow: 1;">
-              <div class="news-meta">
-                <span class="news-tag">{{ news.tag }}</span>
-                <span class="news-date">{{ news.published_date|date:"d M, Y" }}</span>
-                {% if is_admin %}
-                  <a href="{% url 'news_edit' news.id %}" style="margin-left: auto; font-size: 0.78rem; color: var(--pink-700); font-weight: bold;">
-                    ✏️ Editar
-                  </a>
-                {% endif %}
-              </div>
-              <h4 class="news-title">{{ news.title }}</h4>
-              <p class="news-excerpt">{{ news.summary }}</p>
-            </div>
-          </article>
-          {% empty %}
-          <p style="color: var(--text-secondary); text-align: center; padding: 30px; background: var(--surface-card); border-radius: var(--radius-md);">
-            Pronto publicaremos nuevas novedades y lanzamientos.
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span class="font-label-sm text-xs bg-secondary-container dark:bg-tertiary/40 text-on-secondary-container dark:text-tertiary-fixed px-2.5 py-0.5 rounded-full font-bold">{{ news.tag }}</span>
+            <span class="text-xs text-on-surface-variant dark:text-surface-container-high font-medium">{{ news.published_date|date:"d M, Y" }}</span>
+          </div>
+
+          <h3 class="font-headline-sm text-lg text-on-surface dark:text-white font-bold group-hover:text-primary dark:group-hover:text-primary-fixed transition-colors mb-2">
+            {{ news.title }}
+          </h3>
+          <p class="font-body-sm text-sm text-on-surface-variant dark:text-surface-container-high mb-2">
+            {{ news.summary }}
           </p>
-          {% endfor %}
+          {% if news.content %}
+          <details class="mt-2 text-xs text-on-surface-variant dark:text-surface-container-high">
+            <summary class="cursor-pointer font-bold text-primary dark:text-[#ffb2bf] hover:underline">Leer comunicado completo ↓</summary>
+            <p class="mt-2 p-3 rounded-xl bg-surface-container-low dark:bg-black/30 leading-relaxed">{{ news.content }}</p>
+          </details>
+          {% endif %}
         </div>
-      </div>
 
+        <div class="mt-4 pt-3 border-t border-outline-variant/20 flex items-center justify-between">
+          <span class="inline-flex items-center gap-1 font-label-md text-xs font-bold text-primary dark:text-[#ffb2bf]">
+            <span class="material-symbols-outlined text-sm">verified</span> Oficial {{ site_config.site_name }}
+          </span>
+          {% if is_admin %}
+            <a href="{% url 'news_edit' news.id %}" class="text-xs font-bold text-primary dark:text-[#ffb2bf] hover:underline">
+              ✏️ Editar
+            </a>
+          {% endif %}
+        </div>
+      </article>
+      {% empty %}
+      <p class="col-span-full text-center py-8 text-on-surface-variant dark:text-surface-container-high">
+        Pronto publicaremos nuevas noticias y lanzamientos de la banda.
+      </p>
+      {% endfor %}
     </div>
   </section>
 
+</div>
 {% endblock %}
