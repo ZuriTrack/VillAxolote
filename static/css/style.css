@@ -608,6 +608,9 @@ img {
 
 .bio-image-col {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .bio-image-frame {
@@ -621,7 +624,8 @@ img {
 
 .bio-image-frame img {
   width: 100%;
-  height: 420px;
+  height: auto;
+  max-height: 450px;
   object-fit: cover;
   transition: transform 0.5s ease;
 }
@@ -631,15 +635,15 @@ img {
 }
 
 .bio-quote-bubble {
-  position: absolute;
-  bottom: -20px;
-  right: -20px;
-  background: #ffffff;
-  border: 2px solid var(--pink-300);
+  position: relative;
+  background: linear-gradient(135deg, #ffffff 0%, var(--pink-50) 100%);
+  border: 1.5px solid var(--pink-300);
+  border-left: 5px solid var(--pink-500);
   border-radius: var(--radius-md);
-  padding: 14px 20px;
-  max-width: 280px;
-  font-size: 0.92rem;
+  padding: 16px 22px;
+  width: 100%;
+  text-align: center;
+  font-size: 0.96rem;
   font-style: italic;
   color: var(--pink-800);
   font-weight: 600;
@@ -1257,13 +1261,324 @@ img {
   .footer-container {
     grid-template-columns: 1fr;
   }
-  .bio-quote-bubble {
-    position: static;
-    margin-top: 16px;
-  }
   .footer-bottom {
     flex-direction: column;
     gap: 10px;
     text-align: center;
+  }
+}
+
+/* ==========================================================================
+   MODO OSCURO ([data-theme="dark"])
+   ========================================================================== */
+[data-theme="dark"] {
+  --pink-50: #160d15;
+  --pink-100: #241422;
+  --pink-200: #361d33;
+  --pink-300: #6b3350;
+  --pink-400: #f78fb3;
+  --pink-500: #f8a5c2;
+  --pink-600: #fbb1bd;
+  --pink-700: #ffccd5;
+  --pink-800: #ffe5ec;
+  --pink-900: #fff5f7;
+
+  --bg-gradient: linear-gradient(180deg, #110811 0%, #1b0e1a 45%, #120912 100%);
+  --surface-card: rgba(33, 17, 32, 0.86);
+  --surface-card-hover: rgba(45, 24, 44, 0.95);
+  --border-pink: rgba(248, 165, 194, 0.25);
+  --border-pink-strong: rgba(247, 143, 179, 0.5);
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.5);
+  --shadow-hover: 0 16px 40px rgba(247, 143, 179, 0.22);
+
+  --text-primary: #fdf2f6;
+  --text-secondary: #e2bfd0;
+  --text-muted: #b08499;
+}
+
+[data-theme="dark"] .site-header {
+  background: rgba(22, 11, 21, 0.88);
+}
+
+[data-theme="dark"] .site-header.scrolled {
+  background: rgba(22, 11, 21, 0.96);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .brand .logo-icon {
+  background: linear-gradient(135deg, #c44569, #f78fb3);
+}
+
+[data-theme="dark"] .btn-primary {
+  background: linear-gradient(135deg, #e76f8a, #c44569);
+  color: #ffffff;
+}
+
+[data-theme="dark"] .btn-primary:hover {
+  background: linear-gradient(135deg, #f78fb3, #e76f8a);
+}
+
+[data-theme="dark"] .carousel-container {
+  background: #1d0f1c;
+}
+
+[data-theme="dark"] .carousel-btn {
+  background: rgba(36, 20, 34, 0.85);
+  color: var(--pink-800);
+}
+
+[data-theme="dark"] .carousel-btn:hover {
+  background: #361d33;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .bio-image-frame {
+  border-color: var(--pink-200);
+}
+
+[data-theme="dark"] .bio-quote-bubble {
+  background: linear-gradient(135deg, #241422 0%, #1a0e19 100%);
+  border-color: var(--pink-300);
+  border-left-color: var(--pink-400);
+  color: var(--pink-800);
+}
+
+[data-theme="dark"] .filter-btn {
+  background: #241422;
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .filter-btn:hover,
+[data-theme="dark"] .filter-btn.active {
+  background: #c44569;
+  color: #ffffff;
+  border-color: #f78fb3;
+}
+
+[data-theme="dark"] .concert-card:hover {
+  background: var(--surface-card-hover);
+}
+
+[data-theme="dark"] .auth-card {
+  background: rgba(33, 17, 32, 0.94);
+}
+
+[data-theme="dark"] .form-control {
+  background: #1a0e19;
+  color: var(--text-primary);
+  border-color: var(--border-pink);
+}
+
+[data-theme="dark"] .site-footer {
+  background: linear-gradient(180deg, #160d15 0%, #0e070e 100%);
+}
+
+[data-theme="dark"] .social-btn {
+  background: #241422;
+  color: var(--pink-700);
+}
+
+[data-theme="dark"] .social-btn:hover {
+  background: #c44569;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .nav-links {
+  background: transparent;
+}
+
+@media (max-width: 768px) {
+  [data-theme="dark"] .nav-links {
+    background: #1b0e1a;
+  }
+}
+
+/* Adaptar tarjetas con estilos inline blancos en el panel de control */
+[data-theme="dark"] [style*="background: #ffffff"] {
+  background: #241422 !important;
+}
+
+/* ==========================================================================
+   FONDO DINÁMICO DE AJOLOTITOS NADANDO
+   ========================================================================== */
+main,
+.site-footer,
+.announcement-bar,
+.messages-container {
+  position: relative;
+  z-index: 1;
+}
+
+.axolotl-bg-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+
+.axolotl-bg-container.hidden {
+  opacity: 0;
+}
+
+.bg-axolotl-item {
+  position: absolute;
+  will-change: transform;
+  opacity: 0.38;
+  filter: drop-shadow(0 6px 14px rgba(247, 143, 179, 0.28));
+  animation: axolotlSwim var(--swim-duration, 24s) ease-in-out infinite alternate;
+  animation-delay: var(--swim-delay, 0s);
+}
+
+[data-theme="dark"] .bg-axolotl-item {
+  opacity: 0.28;
+  filter: drop-shadow(0 0 16px rgba(248, 165, 194, 0.35));
+}
+
+.bg-axolotl-inner {
+  animation: axolotlBob var(--bob-duration, 4.5s) ease-in-out infinite;
+}
+
+.bg-axolotl-svg .axolotl-gills {
+  transform-origin: center;
+  animation: gillFlutter 2.2s ease-in-out infinite alternate;
+}
+
+.bg-axolotl-svg .axolotl-tail {
+  transform-origin: 50% 75%;
+  animation: tailSway 1.8s ease-in-out infinite alternate;
+}
+
+.bg-bubble-item {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.85), rgba(248, 165, 194, 0.35));
+  border: 1px solid rgba(248, 165, 194, 0.5);
+  animation: bubbleRise var(--bubble-duration, 14s) linear infinite;
+  animation-delay: var(--bubble-delay, 0s);
+  opacity: 0.5;
+}
+
+[data-theme="dark"] .bg-bubble-item {
+  background: radial-gradient(circle at 30% 30%, rgba(255, 204, 213, 0.45), rgba(196, 69, 105, 0.2));
+  border-color: rgba(248, 165, 194, 0.35);
+}
+
+@keyframes axolotlSwim {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(var(--rot-start, -6deg)) scaleX(var(--flip, 1));
+  }
+  50% {
+    transform: translate3d(var(--dx-mid, 45px), var(--dy-mid, -35px), 0) rotate(var(--rot-mid, 5deg)) scaleX(var(--flip, 1));
+  }
+  100% {
+    transform: translate3d(var(--dx-end, -40px), var(--dy-end, 30px), 0) rotate(var(--rot-end, -4deg)) scaleX(var(--flip, 1));
+  }
+}
+
+@keyframes axolotlBob {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes gillFlutter {
+  0% { transform: scale(1) rotate(-2deg); }
+  100% { transform: scale(1.04) rotate(2deg); }
+}
+
+@keyframes tailSway {
+  0% { transform: rotate(-6deg); }
+  100% { transform: rotate(6deg); }
+}
+
+@keyframes bubbleRise {
+  0% {
+    transform: translateY(105vh) translateX(0) scale(0.8);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.55;
+  }
+  85% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: translateY(-10vh) translateX(var(--bubble-drift, 30px)) scale(1.15);
+    opacity: 0;
+  }
+}
+
+/* ==========================================================================
+   BOTONES FLOTANTES EN LA ESQUINA (Modo Oscuro/Claro + Fondo de Ajolotitos)
+   ========================================================================== */
+.floating-controls {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.floating-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--border-pink-strong);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--pink-900);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(196, 69, 105, 0.25);
+  transition: var(--transition);
+}
+
+[data-theme="dark"] .floating-btn {
+  background: rgba(36, 20, 34, 0.92);
+  color: var(--pink-900);
+  border-color: rgba(248, 165, 194, 0.45);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.65);
+}
+
+.floating-btn:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: var(--shadow-glow);
+  border-color: var(--pink-500);
+}
+
+.floating-btn.active {
+  background: linear-gradient(135deg, var(--pink-100), #ffffff);
+}
+
+[data-theme="dark"] .floating-btn.active {
+  background: linear-gradient(135deg, #361d33, #241422);
+}
+
+.floating-btn-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 576px) {
+  .floating-controls {
+    bottom: 16px;
+    right: 16px;
+  }
+  .floating-btn {
+    padding: 9px 14px;
+    font-size: 0.82rem;
   }
 }
